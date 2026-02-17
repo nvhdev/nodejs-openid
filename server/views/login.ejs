@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Login</title>
+  <style>
+    .claim-row { margin-bottom: 8px; }
+  </style>
+</head>
+<body>
+  <h1>Login for <%= client.client_id %></h1>
+
+  <form method="POST" action="/login">
+    <input type="hidden" name="client_id" value="<%= client.client_id %>">
+    <input type="hidden" name="redirect_uri" value="<%= redirect_uri %>">
+    <input type="hidden" name="state" value="<%= state %>">
+    <input type="hidden" name="code_challenge" value="<%= code_challenge %>">
+    <input type="hidden" name="code_challenge_method" value="<%= code_challenge_method %>">
+    <input type="hidden" name="nonce" value="<%= nonce %>">
+
+    <h3>Select predefined user</h3>
+
+<select id="predefinedSelect" onchange="fillPredefined()">
+  <option value="">-- choose user --</option>
+  <% predefined.forEach(function(u, index) { %>
+    <option value="<%= index %>"><%= u.label %></option>
+  <% }) %>
+</select>
+<script>
+  const predefined = <%- JSON.stringify(predefined) %>;
+
+  function fillPredefined() {
+    const idx = document.getElementById('predefinedSelect').value;
+    if (idx === "") return;
+
+    const user = predefined[idx];
+
+    // Fill username + password
+    document.querySelector('input[name="sub"]').value = user.sub;
+    document.querySelector('input[name="password"]').value = user.password;
+
+    // Fill predefined claim fields (if they exist on the page)
+    for (const key in user.claims) {
+      const field = document.querySelector(`input[name="${key}"]`);
+      if (field) {
+        field.value = user.claims[key];
+      } else {
+        // If the claim is NOT a predefined field → add it as a dynamic claim
+        addDynamicClaim(key, user.claims[key]);
+      }
+    }
+  }
+
+  function addDynamicClaim(name = "", value = "") {
+    const container = document.getElementById('claims');
+    const div = document.createElement('div');
+    div.className = 'claim-row';
+
+    div.innerHTML = `
+      <input type="text" name="claim_name[]" placeholder="Claim name" value="${name}" required />
+      <input type="text" name="claim_value[]" placeholder="Claim value" value="${value}" required />
+    `;
+
+    container.appendChild(div);
+  }
+</script>
+
+
+
+    <p>
+      <label>Username:</label>
+      <input type="text" name="sub" required />
+    </p>
+
+    <p>
+      <label>Password:</label>
+      <input type="password" name="password" required />
+    </p>
+
+    <h3>Predefined Claims</h3>
+    <% client.allowed_claim_fields.forEach(function(field) { %>
+      <p>
+        <label><%= field %>:</label>
+        <input type="text" name="<%= field %>" />
+      </p>
+    <% }); %>
+
+    <h3>Custom Claims</h3>
+    <div id="claims"></div>
+
+    <button type="button" onclick="addClaim()">Add claim</button>
+
+    <br><br>
+    <button type="submit">Login</button>
+  </form>
+
+  <script>
+    function addClaim() {
+      const container = document.getElementById('claims');
+      const div = document.createElement('div');
+      div.className = 'claim-row';
+
+      div.innerHTML = `
+        <input type="text" name="claim_name[]" placeholder="Claim name" required />
+        <input type="text" name="claim_value[]" placeholder="Claim value" required />
+      `;
+
+      container.appendChild(div);
+    }
+  </script>
+</body>
+</html>

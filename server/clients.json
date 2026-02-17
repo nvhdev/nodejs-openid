@@ -1,0 +1,8 @@
+[
+  {
+    "client_id": "demo-client",
+    "client_secret": "supersecret",
+    "redirect_uris": ["http://localhost:3000/callback"],
+    "allowed_claim_fields": ["email", "name", "role"]
+  }
+]

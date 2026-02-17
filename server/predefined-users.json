@@ -1,0 +1,38 @@
+{
+  "demo-client": [
+    {
+      "label": "Alice Admin",
+      "sub": "alice",
+      "password": "alice123",
+      "claims": {
+        "name": "Alice",
+        "email": "alice@example.com",
+        "role": "admin",
+        "department": "IT"
+      }
+    },
+    {
+      "label": "Bob User",
+      "sub": "bob",
+      "password": "bob123",
+      "claims": {
+        "name": "Bob",
+        "email": "bob@example.com",
+        "role": "user",
+        "department": "Sales"
+      }
+    }
+  ],
+  "another-client": [
+    {
+      "label": "Charlie",
+      "sub": "charlie",
+      "password": "charlie123",
+      "claims": {
+        "name": "Charlie",
+        "email": "charlie@example.com",
+        "role": "manager"
+      }
+    }
+  ]
+}
