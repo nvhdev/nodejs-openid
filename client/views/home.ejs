@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Client App</title>
+</head>
+<body>
+  <h1>Client App</h1>
+
+  <% if (!loggedIn) { %>
+    <p>You are not logged in.</p>
+    <form method="GET" action="/login">
+      <button type="submit">Login</button>
+    </form>
+  <% } else { %>
+    <h2>Logged in</h2>
+    <pre><%= JSON.stringify(claims, null, 2) %></pre>
+
+    <form method="POST" action="/revoke">
+      <button type="submit">Revoke Access Token</button>
+    </form>
+
+    <form method="POST" action="/logout">
+      <button type="submit">Logout</button>
+    </form>
+  <% } %>
+</body>
+</html>
