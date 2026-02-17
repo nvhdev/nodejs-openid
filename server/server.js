@@ -175,12 +175,14 @@ app.post('/login', (req, res) => {
   } = req.body;
 
   const client = getClient(client_id);
+  console.log("Login attempt:", { client, client_id, redirect_uri, state, code_challenge, code_challenge_method, nonce, sub, password, rest });
   if (!client) return res.status(400).send('invalid_client');
   if (!client.redirect_uris.includes(redirect_uri)) {
     return res.status(400).send('invalid_redirect_uri');
   }
 
   const user = getUser(sub);
+  console.log("Found user:", {sub, user});
   if (!user || user.password !== password) {
     return res.status(401).send('invalid_credentials');
   }

@@ -3,12 +3,129 @@
 <head>
   <meta charset="utf-8" />
   <title>Login</title>
+
   <style>
-    .claim-row { margin-bottom: 8px; }
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 900px;
+      margin: 20px auto;
+      line-height: 1.5;
+    }
+
+    .card {
+      border: 1px solid #ccc;
+      padding: 16px;
+      border-radius: 8px;
+      background: #fdfdfd;
+      margin-bottom: 20px;
+    }
+
+    .claim-card {
+      border: 1px solid #ddd;
+      padding: 12px;
+      border-radius: 6px;
+      background: #fafafa;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .claim-card label {
+      font-weight: bold;
+      width: 30%;
+    }
+
+    .claim-card input {
+      width: 70%;
+      padding: 6px;
+      border-radius: 4px;
+      border: 1px solid #bbb;
+    }
+
+    .row {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .field {
+      flex: 1;
+      min-width: 250px;
+    }
+
+    .field label {
+      font-weight: bold;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 6px;
+      margin-top: 4px;
+      border-radius: 4px;
+      border: 1px solid #bbb;
+    }
+
+    .claim-row {
+      border: 1px solid #ccc;
+      padding: 12px;
+      margin-bottom: 10px;
+      border-radius: 6px;
+      background: #f9f9f9;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      position: relative;
+    }
+
+    .claim-name {
+      width: 30%;
+      height: 40px;
+    }
+
+    .claim-value {
+      width: 60%;
+      height: 60px;
+      resize: vertical;
+    }
+
+    .remove-btn {
+      background: #d9534f;
+      color: white;
+      border: none;
+      padding: 4px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      height: 30px;
+      align-self: center;
+    }
+
+    .remove-btn:hover {
+      background: #c9302c;
+    }
+
+    .add-btn {
+      margin-top: 10px;
+      padding: 6px 12px;
+      background: #0275d8;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .add-btn:hover {
+      background: #025aa5;
+    }
   </style>
 </head>
+
 <body>
+
   <h1>Login for <%= client.client_id %></h1>
+
 
   <form method="POST" action="/login">
     <input type="hidden" name="client_id" value="<%= client.client_id %>">
@@ -17,96 +134,157 @@
     <input type="hidden" name="code_challenge" value="<%= code_challenge %>">
     <input type="hidden" name="code_challenge_method" value="<%= code_challenge_method %>">
     <input type="hidden" name="nonce" value="<%= nonce %>">
-
+  <!-- Predefined user selector card -->
+  <div class="card">
     <h3>Select predefined user</h3>
 
-<select id="predefinedSelect" onchange="fillPredefined()">
-  <option value="">-- choose user --</option>
-  <% predefined.forEach(function(u, index) { %>
-    <option value="<%= index %>"><%= u.label %></option>
-  <% }) %>
-</select>
-<script>
-  const predefined = <%- JSON.stringify(predefined) %>;
+    <div class="field">
+      <select id="predefinedSelect" onchange="fillPredefined()">
+        <option value="">-- choose user --</option>
+        <% predefined.forEach(function(u, index) { %>
+          <option value="<%= index %>"><%= u.label %></option>
+        <% }) %>
+      </select>
+    </div>
+  </div>
 
-  function fillPredefined() {
-    const idx = document.getElementById('predefinedSelect').value;
-    if (idx === "") return;
-
-    const user = predefined[idx];
-
-    // Fill username + password
-    document.querySelector('input[name="sub"]').value = user.sub;
-    document.querySelector('input[name="password"]').value = user.password;
-
-    // Fill predefined claim fields (if they exist on the page)
-    for (const key in user.claims) {
-      const field = document.querySelector(`input[name="${key}"]`);
-      if (field) {
-        field.value = user.claims[key];
-      } else {
-        // If the claim is NOT a predefined field → add it as a dynamic claim
-        addDynamicClaim(key, user.claims[key]);
-      }
-    }
-  }
-
-  function addDynamicClaim(name = "", value = "") {
-    const container = document.getElementById('claims');
-    const div = document.createElement('div');
-    div.className = 'claim-row';
-
-    div.innerHTML = `
-      <input type="text" name="claim_name[]" placeholder="Claim name" value="${name}" required />
-      <input type="text" name="claim_value[]" placeholder="Claim value" value="${value}" required />
-    `;
-
-    container.appendChild(div);
-  }
-</script>
-
-
-
-    <p>
-      <label>Username:</label>
-      <input type="text" name="sub" required />
-    </p>
-
-    <p>
-      <label>Password:</label>
-      <input type="password" name="password" required />
-    </p>
-
+  <!-- Predefined claims card group -->
+  <div class="card">
     <h3>Predefined Claims</h3>
+
+    <!-- Username -->
+    <div class="claim-card">
+      <label>Username</label>
+      <input type="text" name="sub" required />
+    </div>
+
+    <!-- Password -->
+    <div class="claim-card">
+      <label>Password</label>
+      <input type="password" name="password" required />
+    </div>
+
+    <!-- Client-specific predefined claims -->
     <% client.allowed_claim_fields.forEach(function(field) { %>
-      <p>
-        <label><%= field %>:</label>
+      <div class="claim-card">
+        <label><%= field %></label>
         <input type="text" name="<%= field %>" />
-      </p>
+      </div>
     <% }); %>
+  </div>
 
     <h3>Custom Claims</h3>
     <div id="claims"></div>
 
-    <button type="button" onclick="addClaim()">Add claim</button>
+    <button type="button" class="add-btn" onclick="addDynamicClaim()">Add custom claim</button>
 
     <br><br>
     <button type="submit">Login</button>
   </form>
 
   <script>
-    function addClaim() {
+    const predefined = <%- JSON.stringify(predefined) %>;
+
+    function addDynamicClaim(name = "", value = "") {
       const container = document.getElementById('claims');
+
       const div = document.createElement('div');
       div.className = 'claim-row';
 
       div.innerHTML = `
-        <input type="text" name="claim_name[]" placeholder="Claim name" required />
-        <input type="text" name="claim_value[]" placeholder="Claim value" required />
+        <input class="claim-name" type="text" name="claim_name[]" placeholder="Claim name" value="${name}">
+        <textarea class="claim-value" name="claim_value[]" placeholder="Claim value">${value}</textarea>
+        <button type="button" class="remove-btn" onclick="this.parentNode.remove()">X</button>
       `;
 
       container.appendChild(div);
     }
+
+    function fillPredefined() {
+      const idx = document.getElementById('predefinedSelect').value;
+      if (idx === "") return;
+
+      const user = predefined[idx];
+
+      // Fill username + password
+      document.querySelector('input[name="sub"]').value = user.sub;
+      document.querySelector('input[name="password"]').value = user.password;
+
+      // Fill predefined claim fields OR add as dynamic claim
+      for (const key in user.claims) {
+        const field = document.querySelector(`input[name="${key}"]`);
+        if (field) {
+          field.value = user.claims[key];
+        } else {
+          addDynamicClaim(key, user.claims[key]);
+        }
+      }
+    }
   </script>
+    <script>
+  const COOKIE_NAME = "oidc_login_data";
+
+  function saveLoginData() {
+    const data = {
+      sub: document.querySelector('input[name="sub"]').value,
+      password: document.querySelector('input[name="password"]').value,
+      predefined: {},
+      dynamic: []
+    };
+
+    // Save predefined claim fields
+    <% client.allowed_claim_fields.forEach(function(field) { %>
+      data.predefined["<%= field %>"] =
+        document.querySelector('input[name="<%= field %>"]').value;
+    <% }); %>
+
+    // Save dynamic claims
+    const names = document.querySelectorAll('input[name="claim_name[]"]');
+    const values = document.querySelectorAll('textarea[name="claim_value[]"]');
+
+    for (let i = 0; i < names.length; i++) {
+      data.dynamic.push({
+        name: names[i].value,
+        value: values[i].value
+      });
+    }
+
+    document.cookie = COOKIE_NAME + "=" + encodeURIComponent(JSON.stringify(data)) +
+      "; path=/; max-age=" + (60 * 60 * 24 * 365);
+  }
+
+  function loadLoginData() {
+    const cookie = document.cookie
+      .split("; ")
+      .find(row => row.startsWith(COOKIE_NAME + "="));
+
+    if (!cookie) return;
+
+    const json = decodeURIComponent(cookie.split("=")[1]);
+    const data = JSON.parse(json);
+
+    // Prefill username + password
+    document.querySelector('input[name="sub"]').value = data.sub || "";
+    document.querySelector('input[name="password"]').value = data.password || "";
+
+    // Prefill predefined claims
+    for (const key in data.predefined) {
+      const field = document.querySelector(`input[name="${key}"]`);
+      if (field) field.value = data.predefined[key];
+    }
+
+    // Prefill dynamic claims
+    if (Array.isArray(data.dynamic)) {
+      data.dynamic.forEach(c => addDynamicClaim(c.name, c.value));
+    }
+  }
+
+  // Load cookie on page load
+  window.addEventListener("DOMContentLoaded", loadLoginData);
+
+  // Save cookie on submit
+  document.querySelector("form").addEventListener("submit", saveLoginData);
+</script>
+
 </body>
 </html>
