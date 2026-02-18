@@ -138,6 +138,7 @@
   <div class="card">
     <h3>Select predefined user</h3>
 
+    <div class="claim-card">
     <div class="field">
       <select id="predefinedSelect" onchange="fillPredefined()">
         <option value="">-- choose user --</option>
@@ -146,11 +147,7 @@
         <% }) %>
       </select>
     </div>
-  </div>
-
-  <!-- Predefined claims card group -->
-  <div class="card">
-    <h3>Predefined Claims</h3>
+    </div>
 
     <!-- Username -->
     <div class="claim-card">
@@ -171,14 +168,12 @@
         <input type="text" name="<%= field %>" />
       </div>
     <% }); %>
-  </div>
-
-    <h3>Custom Claims</h3>
+    
     <div id="claims"></div>
-
+    
     <button type="button" class="add-btn" onclick="addDynamicClaim()">Add custom claim</button>
-
-    <br><br>
+   
+  </div>
     <button type="submit">Login</button>
   </form>
 
@@ -211,6 +206,7 @@
       document.querySelector('input[name="password"]').value = user.password;
 
       // Fill predefined claim fields OR add as dynamic claim
+      document.getElementById('claims').innerHTML = ""; // Clear existing dynamic claims
       for (const key in user.claims) {
         const field = document.querySelector(`input[name="${key}"]`);
         if (field) {
