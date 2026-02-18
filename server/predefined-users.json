@@ -2,8 +2,8 @@
   "demo-client": [
     {
       "label": "Alice Admin",
-      "sub": "alice",
-      "password": "alice123",
+      "sub": "user1",
+      "password": "password1",
       "claims": {
         "name": "Alice",
         "email": "alice@example.com",
@@ -13,8 +13,8 @@
     },
     {
       "label": "Bob User",
-      "sub": "bob",
-      "password": "bob123",
+      "sub": "user2",
+      "password": "password2",
       "claims": {
         "name": "Bob",
         "email": "bob@example.com",
