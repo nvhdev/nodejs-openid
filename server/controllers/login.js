@@ -58,12 +58,21 @@ for (let i = 0; i < names.length; i++) {
 
 exports.postLogin = (req, res, next) => {
   
-  const { sub, password, client_id, redirect_uri, state, code_challenge, code_challenge_method, nonce } = req.body;
+  const { sub, password, client_id, redirect_uri, scope, state, code_challenge, code_challenge_method, nonce } = req.body;
   
-    const user = User.findBySub(sub);
-    if (!user) return res.status(401).send("invalid_credentials");
+    // Authenticate user with password
+    const user = User.authenticate(sub, password);
+    if (!user) {
+      console.log("Authentication failed for sub:", sub);
+      return res.status(401).send("invalid_credentials");
+    }
   
     const claims = buildClaimsForUser(user, req.body);
+    
+    // Add scope to claims
+    if (scope) {
+      claims.scope = scope;
+    }
     
     // store per-client session
     req.session.clients = req.session.clients || {};

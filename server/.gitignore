@@ -1,0 +1,20 @@
+# Environment variables
+.env
+
+# Secrets
+keys/*.pem
+
+# Session database
+data/sessions.sqlite
+data/sessions.sqlite-*
+
+# Node modules
+node_modules/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db

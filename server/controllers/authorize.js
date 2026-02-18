@@ -6,9 +6,6 @@ const AuthCodes = require('../models/auth-codes');
 const Client = require('../models/client');
 const PredefinedUser = require('../models/predefined-user');
 
-
-
-
 exports.getAuthorize = (req, res, next) => {
   const {
     response_type,
@@ -30,7 +27,13 @@ exports.getAuthorize = (req, res, next) => {
     return res.status(400).send("invalid_client");
   }
 
-  // 2. Validate response_type
+  // 2. Validate redirect_uri
+  if (!redirect_uri || !client.isRedirectUriAllowed(redirect_uri)) {
+    console.log("Invalid redirect_uri");
+    return res.status(400).send("invalid_redirect_uri");
+  }
+
+  // 3. Validate response_type
   if (response_type !== "code") {
     console.log("Invalid response_type");
     return res.status(400).send("unsupported_response_type");
@@ -47,7 +50,7 @@ exports.getAuthorize = (req, res, next) => {
     AuthCodes.set(code, {
       client_id,
       redirect_uri,
-      claims: clientSession.claims,
+      claims: { ...clientSession.claims, scope }, // Include scope
       code_challenge,
       code_challenge_method,
       nonce
@@ -67,6 +70,7 @@ exports.getAuthorize = (req, res, next) => {
     client,
     client_id,
     redirect_uri,
+    scope: scope || "openid",
     state: state || "",
     code_challenge: code_challenge || "",
     code_challenge_method: code_challenge_method || "",
