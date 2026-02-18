@@ -33,6 +33,7 @@ exports.getLogout = async (req, res) => {
   }
 
   // 2. Get session user
+  console.log(req.session.clients);
   const sessionEntry = req.session.clients?.[client_id];
   if (!sessionEntry) {
     console.log("Logout denied: no active session for client");

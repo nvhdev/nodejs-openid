@@ -137,12 +137,10 @@
     <input type="hidden" name="nonce" value="<%= nonce %>">
   <!-- Predefined user selector card -->
   <div class="card">
-    <h3>Select predefined user</h3>
-
     <div class="claim-card">
     <div class="field">
       <select id="predefinedSelect" onchange="fillPredefined()">
-        <option value="">-- choose user --</option>
+        <option value="">-- choose predefined values --</option>
         <% predefined.forEach(function(u, index) { %>
           <option value="<%= index %>"><%= u.label %></option>
         <% }) %>

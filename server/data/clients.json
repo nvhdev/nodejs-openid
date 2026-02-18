@@ -5,6 +5,6 @@
     "redirect_uris": [
       "http://localhost:3000/callback"
     ],
-    "allowed_claim_fields": ["email", "name", "role"]
+    "allowed_claim_fields": ["email", "name"]
   }
 ]
